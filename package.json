@@ -19,6 +19,11 @@
     "@angular/platform-browser": "~11.2.6",
     "@angular/platform-browser-dynamic": "~11.2.6",
     "@angular/router": "~11.2.6",
+    "@types/file-saver": "^2.0.5",
+    "file-saver": "^2.0.5",
+    "ng-zorro-antd": "^9.3.0",
+    "ngx-image-cropper": "^3.3.5",
+    "ngx-webcam": "^0.3.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"

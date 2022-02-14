@@ -1,3 +1,7 @@
+# 轻量级在线图片处理项目
+基于ngx-webcam，ngx-image-cropper，可选取本地图片，可在线进行裁剪，裁剪，压缩，并下载
+[Demo 演示地址](https://zlt-1257933030.cos.ap-shanghai.myqcloud.com/photoshop/index.html)
+
 # EasyWebPhotoshop
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.5.

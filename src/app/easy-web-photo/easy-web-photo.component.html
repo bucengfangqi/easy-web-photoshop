@@ -1,0 +1,96 @@
+<div style="margin-bottom: 5px;">
+    <button class="m-r-xs" nz-button nzType="primary" (click)="triggerSnapshot();"
+        [disabled]="webcamImage||imageChangedEvent">
+        <i nz-icon nzType="camera" nzTheme="outline"></i>
+        <span>抓取</span>
+    </button>
+    <button class="m-r-xs" nz-button nzType="primary" (click)="chooseFile(fileSelect)">
+        <i nz-icon nzType="folder-open" nzTheme="outline"></i>
+        <span>本地选择</span>
+    </button>
+    <button class="m-r-xs" nz-button nzType="default" (click)="toggleWebcam();"
+        [disabled]="!webcamImage&&!imageChangedEvent">
+        <i nz-icon nzType="clear" nzTheme="outline"></i>
+        <span>放弃</span>
+    </button>
+    <input style="display: none;" #fileSelect nz-button nzType="primary" type="file"
+        (change)="fileChangeEvent($event)" />
+    <ng-container *ngIf="croppedImage&&!showWebcam">
+        <button class="m-r-xs" nz-button nzType="default" (click)="restoration();">
+            <i nz-icon nzType="rollback" nzTheme="outline"></i>
+            <span>复位</span>
+        </button>
+        <button class="m-r-xs" nz-button nzType="primary" (click)="saveAs();">
+            <i nz-icon nzType="download" nzTheme="outline"></i>
+            <span>下载</span>
+        </button>
+    </ng-container>
+</div>
+
+<div class="webcam animate__animated animate__fadeIn" *ngIf="showWebcam&&!imageChangedEvent">
+    <webcam [height]="367" [width]="490" [mirrorImage]="'never'" [trigger]="triggerObservable"
+        (imageCapture)="handleImage($event)" [allowCameraSwitch]="allowCameraSwitch"
+        [switchCamera]="nextWebcamObservable" [imageQuality]="1" (cameraSwitched)="cameraWasSwitched($event)"
+        (initError)="handleInitError($event)"></webcam>
+</div>
+
+
+<div nz-row>
+    <div nz-col nzMd="24" nzLg="12">
+        <div class="image-cropper animate__animated animate__fadeIn"
+            [style.display]="webcamImage&&!showWebcam ? null : 'none'">
+            <image-cropper #cropperA backgroundColor="transparent" [resizeToWidth]="maxWidth" [transform]="transformA"
+                [imageQuality]="imageQuality" format="jpeg" [cropper]="webCamCropper"
+                (cropperReady)="webCamCropperReady()" [maintainAspectRatio]="false"
+                [imageURL]="webcamImage?.imageAsDataUrl||''" (imageCropped)="imageCropped($event)"
+                (loadImageFailed)="loadImageFailed()">
+            </image-cropper>
+        </div>
+
+        <div class="image-cropper animate__animated animate__fadeIn"
+            [style.display]="imageChangedEvent&&!showWebcam ? null : 'none'">
+            <image-cropper #cropperB backgroundColor="transparent" [resizeToWidth]="maxWidth" [transform]="transformB"
+                [imageQuality]="imageQuality" format="jpeg" [cropper]="imageCropper"
+                (cropperReady)="imageCropperReady()" [maintainAspectRatio]="false" (imageCropped)="imageCropped($event)"
+                [imageChangedEvent]="imageChangedEvent" (loadImageFailed)="loadImageFailed()">
+            </image-cropper>
+        </div>
+    </div>
+    <div *ngIf="croppedImage&&!showWebcam" nz-col nzMd="24" nzLg="12" style="background: rgba(0, 0, 0);">
+        <div nz-row nzJustify="center" nzAlign="middle" style="height: 100%;">
+            <div nz-col>
+                <img *ngIf="croppedImage&&!showWebcam" [src]="croppedImage" class="croppedImage" />
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="croppedImage&&!showWebcam">
+    <div style="max-width: 500px;">
+        清晰度：<b>{{imageQuality}}%</b>
+        <nz-slider [(ngModel)]="imageQuality" [nzMarks]="qualityMarks" (ngModelChange)="ngModelChange($event)"
+            nzMax="100">
+        </nz-slider>
+    </div>
+    <div style="max-width: 500px;">
+        宽度：<b>{{maxWidth}}px</b>
+        <nz-slider [(ngModel)]="maxWidth" [nzMarks]="widthMarks" (ngModelChange)="ngModelChange($event)" nzMax="640"
+            nzMin="10"></nz-slider>
+    </div>
+    <div style="max-width: 500px;">
+        旋转：<b>{{transform.rotate}}deg</b>
+        <nz-slider [(ngModel)]="transform.rotate" [nzMarks]="rotateMarks" (ngModelChange)="ngModelChange($event)"
+            nzMax="360"></nz-slider>
+    </div>
+    <div style="max-width: 500px;">
+        缩放：<b>{{transform.scale}}x</b>
+        <nz-slider [(ngModel)]="transform.scale" [nzMarks]="scaleMarks" (ngModelChange)="ngModelChange($event)"
+            nzMax="3" nzStep="0.01" nzMin="0.5"></nz-slider>
+    </div>
+    <div>
+        <label nz-checkbox [(ngModel)]="transform.flipH" (ngModelChange)="ngModelChange($event)"><b>水平翻转</b></label>
+        <label nz-checkbox [(ngModel)]="transform.flipV" (ngModelChange)="ngModelChange($event)"><b>垂直翻转</b></label>
+
+        裁剪后大小：<b style="color: red;">{{croppedImageSize}} KB</b>
+    </div>
+
+</div>
